@@ -1,24 +1,27 @@
+import { combineReducers } from 'redux';
 import {  ADD_TODO, 
   TOGGLE_TODO, 
   SET_VISIBILITY_FILTER, 
   VisibilityFilters 
 } from '../actions';
 
-const initialState = {
-  visibilityFilter: VisibilityFilters.SHOW_ALL,
-  todos: [
-    {
-      text: 'Consider using Redux',
-      completed: true
-    },
-    {
-      text: 'Keep all state in a single tree',
-      completed: false
-    }
-  ]
-}
+const { SHOW_ALL } = VisibilityFilters;
 
-const todos(state = [], action) => {
+// const initialState = {
+//   visibilityFilter: VisibilityFilters.SHOW_ALL,
+//   todos: [
+//     {
+//       text: 'Consider using Redux',
+//       completed: true
+//     },
+//     {
+//       text: 'Keep all state in a single tree',
+//       completed: false
+//     }
+//   ]
+// }
+
+const todos = (state = [], action) => {
   switch (action.type) {
     case ADD_TODO:
       return [
@@ -34,29 +37,33 @@ const todos(state = [], action) => {
           return Object.assign({}, todo, {
             completed: !todo.completed
           })
-        }
-        return todo
-      })
+      }
+      return todo
+    })
     default:
       return state
   }
 }
 
-const todoApp = (state = initialState, action) => {
+const visibilityFilter = (state = SHOW_ALL, action) => {
   switch (action.type){
-    case SET_VISIBILITY_FILTER: 
-      return Object.assign({}, state, {
-        visibilityFilter: action.filter
-      })
-    case ADD_TODO:
-      return Object.assign({}, state, {
-        todos: todos(state.todos, action)
-      })
-    case TOGGLE_TODO:
-      return Object.assign({}, state, {
-        todos: todos(state.todos, action)
-      })
-    default: 
-      return state
+    case SET_VISIBILITY_FILTER:
+      return action.filter
+  default:
+    return state
   }
 }
+
+// const todoApp = (state = {}, action) => {
+//   return {
+//     visibilityFilter: visibilityFilter(state.visibilityFilter, action),
+//     todos: todos(state.todos, action)
+//   }
+// } down below is the equivalent to this using redux's combine reducer 
+
+const todoApp = combineReducers({
+  visibilityFilter,
+  todos
+});
+
+export default todoApp;
